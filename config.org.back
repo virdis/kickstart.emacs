@@ -1,4 +1,4 @@
-+Title: Emacs Kickstarter
+#+Title: Emacs Kickstarter
 #+Author: MiniApollo
 #+Description: A starting point for Gnu Emacs with good defaults and packages that most people may want to use.
 #+PROPERTY: header-args:emacs-lisp :tangle ./init.el :mkdirp yes
@@ -12,8 +12,6 @@
   - [[#auto-tangle-configuration-file][Auto-tangle Configuration file]]
   - [[#use-package][Use Package]]
   - [[#evil-mode][Evil Mode]]
-  - [[#evil-escape][Evil Escape]]
-  - [[#keychord][KeyChord]]
   - [[#general-keybindings][General Keybindings]]
   - [[#good-defaults][Good Defaults]]
 - [[#appearance][Appearance]]
@@ -24,7 +22,6 @@
 - [[#development][Development]]
   - [[#projectile][Projectile]]
   - [[#eglot][Eglot]]
-  - [[#lsp-mode][Lsp Mode]]
   - [[#yasnippet][Yasnippet]]
   - [[#language-modes][Language modes]]
   - [[#terminal][Terminal]]
@@ -141,30 +138,6 @@ If you don't want to use evil-mode don't forget to remove:
       (evil-collection-init))
 #+end_src
 
-
-
-** Evil Escape 
-Customizazble key sequence to escape from insert state.
-#+begin_src emacs-lisp
-         ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-         ;; (use-package evil-escape					    ;;
-         ;;   :ensure t)								    ;;
-         ;; (setq-default evil-escape-key-sequence "aa") ;;
-         ;; (setq-default evil-escape-delay 0.2)		    ;;
-         ;; (setq-default evil-escape-mode t)		    ;;
-         ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-#+end_src
-
-** KeyChord
-Customize keystroke
-#+begin_src emacs-lisp
-    (use-package key-chord
-      :ensure t)
-    (key-chord-mode 1) 
-    (key-chord-define evil-insert-state-map "aa" 'evil-normal-state)
-    (setq key-chord-one-key-delay 0.2) 
-#+end_src
-
 ** General Keybindings
 A keybinding framework to set keybindings easily.
 The Leader key is what you will press when you want to access your keybindings (SPC + . Find file).
@@ -195,23 +168,6 @@ To search and replace, use query-replace-regexp to replace one by one C-M-% (SPC
         "f i" '(consult-imenu :wk "Imenu buffer locations"))
 
       (start/leader-keys
-        "c" '(:ignore t :wk "Code/Lsp")
-        "c d" '(lsp-find-definition :wk "Lsp find definition")
-        "c r" '(lsp-find-references :wk "Lsp find references")
-        "c i" '(lsp-find-implementation :wk "Lsp find implementations")
-        "c e" '(lsp-treemacs-errors-list :wk "Show error list")
-        "c R" '(lsp-rename :wk "Rename symbol")
-        "c K" '(lsp-ui-doc-show :wk "Show ui docs symbol")
-        "c W" '(lsp-ui-doc-focus-frame :wk "Focus doc frame")
-        "c u r" '(lsp-ui-peek-find-references :wk "Lsp find references"))
-
-      (start/leader-keys
-        "t" '(:ignore t :wk "Code test")
-        "t f" '(go-test-current-file :wk "Go test current file")
-        "t c" '(go-test-current-test :wk "Go test current test")
-        "t p" '(go-test-current-project :wk "Go test current project"))
-
-      (start/leader-keys
         "b" '(:ignore t :wk "Buffer Bookmarks")
         "b b" '(consult-buffer :wk "Switch buffer")
         "b k" '(kill-this-buffer :wk "Kill this buffer")
@@ -227,6 +183,14 @@ To search and replace, use query-replace-regexp to replace one by one C-M-% (SPC
         "d j" '(dired-jump :wk "Dired jump to current"))
 
       (start/leader-keys
+        "e" '(:ignore t :wk "Eglot Evaluate")
+        "e e" '(eglot-reconnect :wk "Eglot Reconnect")
+        "e f" '(eglot-format :wk "Eglot Format")
+        "e l" '(consult-flymake :wk "Consult Flymake")
+        "e b" '(eval-buffer :wk "Evaluate elisp in buffer")
+        "e r" '(eval-region :wk "Evaluate elisp in region"))
+
+      (start/leader-keys
         "g" '(:ignore t :wk "Git")
         "g g" '(magit-status :wk "Magit status"))
 
@@ -239,10 +203,12 @@ To search and replace, use query-replace-regexp to replace one by one C-M-% (SPC
 
       (start/leader-keys
         "s" '(:ignore t :wk "Show")
-        "s e" '(eat :wk "Eat terminal")
-        "s t" '(visual-line-mode :wk "Toggle truncated lines (wrap)")
-        "s l" '(display-line-numbers-mode :wk "Toggle line numbers")))
+        "s e" '(eat :wk "Eat terminal"))
 
+      (start/leader-keys
+        "t" '(:ignore t :wk "Toggle")
+        "t t" '(visual-line-mode :wk "Toggle truncated lines (wrap)")
+        "t l" '(display-line-numbers-mode :wk "Toggle line numbers")))
 #+end_src
 
 ** Good Defaults
@@ -300,16 +266,9 @@ To search and replace, use query-replace-regexp to replace one by one C-M-% (SPC
 Set gruvbox theme, if you want some themes try out doom-themes.
 Use consult-theme to easily try out themes (*Epilepsy* Warning).
 #+begin_src emacs-lisp
-    (use-package catppuccin-theme
+    (use-package gruvbox-theme
       :config
-      (load-theme 'catppuccin))
-      (setq catppuccin-flavor 'latte)
-      (catppuccin-reload)
-    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-    ;; (use-package gruvbox-theme													    ;;
-    ;;   :config																	    ;;
-    ;;   (load-theme 'gruvbox-dark-medium t)) ;; We need to add t to trust this package ;;
-    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+      (load-theme 'gruvbox-dark-medium t)) ;; We need to add t to trust this package
 #+end_src
 
 ** Transparency
@@ -322,9 +281,9 @@ With Emacs version 29, true transparency has been added.
 *** Setting fonts
 #+begin_src emacs-lisp
     (set-face-attribute 'default nil
-                        :font "Iosevka Nerd Font" ;; Set your favorite type of font or download JetBrains Mono
-                        :height 160
-                        :weight 'bold)
+                        ;; :font "JetBrains Mono" ;; Set your favorite type of font or download JetBrains Mono
+                        :height 120
+                        :weight 'medium)
     ;; This sets the default font on all graphical frames created after restarting Emacs.
     ;; Does the same thing as 'set-face-attribute default' above, but emacsclient fonts
     ;; are not right unless I also add this method of setting the default font.
@@ -405,46 +364,6 @@ Use visual block to uncomment easily in Org documents (C-v).
     ;;  )
 #+end_src
 
-** Lsp Mode 
-Langauge server protoco Support for Emacs 
-
-#+begin_src emacs-lisp
-
-    (use-package lsp-mode
-      :init
-      ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
-      (setq lsp-keymap-prefix "C-c l")
-      :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
-             (go-mode . lsp-deferred)
-             ;; if you want which-key integration
-             (lsp-mode . lsp-enable-which-key-integration))
-      :commands lsp-deferred)
-
-    ;; optionally
-    (use-package lsp-ui :commands lsp-ui-mode
-    :config
-    (lsp-ui-doc-enable t)
-    (setq lsp-ui-doc-position 'at-point)
-    (lsp-ui-doc-frame-mode t))
-    
-    ;; if you are helm user
-    ;;(use-package helm-lsp :commands helm-lsp-workspace-symbol)
-    ;; if you are ivy user
-    (use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
-    (use-package lsp-treemacs :commands lsp-treemacs-errors-list)
-
-    ;; optionally if you want to use debugger
-    (use-package dap-mode)
-    ;; (use-package dap-LANGUAGE) to load the dap adapter for your language
-
-    ;; optional if you want which-key integration
-    (use-package which-key
-        :config
-        (which-key-mode))
-
-#+end_src
-
-
 ** Yasnippet
 A template system for Emacs. And yasnippet-snippets is a snippet collection package.
 To use it write out the full keyword (or use autocompletion) and press Tab.
@@ -465,22 +384,6 @@ Use SPC-tab to uncomment the lines.
 #     (use-package lua-mode
 #       :mode "\\.lua\\'") ;; Only start in a lua file
 # #+end_src
-
-*** Golang Mode 
-
-#+begin_src emacs-lisp
-(use-package go-mode
-  :config 
-  (setq lsp-go-analyses '((shadow . t))))
-#+end_src
-
-*** GoTest Mode 
-Run Go tests and programs from emacs. 
-#+begin_src emacs-lisp
-(use-package gotest
- :ensure t)
-
-#+end_src
 
 *** Org Mode
 Org mode is one of the things that emacs is loved for.
