@@ -1,5 +1,5 @@
-+Title: Emacs Kickstarter
-#+Author: MiniApollo
+#+Title: Emacs Kickstarter
+#+Author: Sandeep Virdi 
 #+Description: A starting point for Gnu Emacs with good defaults and packages that most people may want to use.
 #+PROPERTY: header-args:emacs-lisp :tangle ./init.el :mkdirp yes
 #+Startup: showeverything
