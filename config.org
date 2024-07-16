@@ -1,5 +1,5 @@
-#+Title: Emacs Kickstarter
-#+Author: Sandeep Virdi 
++Title: Emacs Kickstarter
+#+Author: MiniApollo
 #+Description: A starting point for Gnu Emacs with good defaults and packages that most people may want to use.
 #+PROPERTY: header-args:emacs-lisp :tangle ./init.el :mkdirp yes
 #+Startup: showeverything
@@ -203,6 +203,7 @@ To search and replace, use query-replace-regexp to replace one by one C-M-% (SPC
         "c R" '(lsp-rename :wk "Rename symbol")
         "c K" '(lsp-ui-doc-show :wk "Show ui docs symbol")
         "c W" '(lsp-ui-doc-focus-frame :wk "Focus doc frame")
+        "c H" '(lsp-treemacs-call-hierarchy :wk "Incoming call hierarchy")
         "c u r" '(lsp-ui-peek-find-references :wk "Lsp find references"))
 
       (start/leader-keys
@@ -416,17 +417,22 @@ Langauge server protoco Support for Emacs
       (setq lsp-keymap-prefix "C-c l")
       :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
              (go-mode . lsp-deferred)
+             (clojure-mode . lsp-deferred)
+             (clojurescript-mode . lsp-deferred)
+             (clojurec-mode . lsp-deferred)
              ;; if you want which-key integration
              (lsp-mode . lsp-enable-which-key-integration))
       :commands lsp-deferred)
 
     ;; optionally
-    (use-package lsp-ui :commands lsp-ui-mode
-    :config
-    (lsp-ui-doc-enable t)
-    (setq lsp-ui-doc-position 'at-point)
-    (lsp-ui-doc-frame-mode t))
-    
+    (use-package lsp-ui :commands lsp-ui-mode)
+
+    (use-package company
+      :ensure t)
+
+    (use-package flycheck
+      :ensure t)
+
     ;; if you are helm user
     ;;(use-package helm-lsp :commands helm-lsp-workspace-symbol)
     ;; if you are ivy user
@@ -439,8 +445,8 @@ Langauge server protoco Support for Emacs
 
     ;; optional if you want which-key integration
     (use-package which-key
-        :config
-        (which-key-mode))
+      :config
+      (which-key-mode))
 
 #+end_src
 
@@ -469,9 +475,15 @@ Use SPC-tab to uncomment the lines.
 *** Golang Mode 
 
 #+begin_src emacs-lisp
-(use-package go-mode
-  :config 
-  (setq lsp-go-analyses '((shadow . t))))
+    (use-package go-mode
+      :hook ((go-mode . 'lsp-go-install-save-hooks))
+      :config
+      (setq lsp-go-analyses '((shadow . t)
+                              (staticcheck . t))))
+
+    (defun lsp-go-install-save-hooks ()
+      (add-hook 'before-save-hook #'lsp-format-buffer t t)
+      (add-hook 'before-save-hook #'lsp-organize-imports t t))
 #+end_src
 
 *** GoTest Mode 
@@ -479,6 +491,32 @@ Run Go tests and programs from emacs.
 #+begin_src emacs-lisp
 (use-package gotest
  :ensure t)
+
+#+end_src
+
+*** Clojure Lsp Mode
+
+#+begin_src emacs-lisp
+    (use-package clojure-mode
+      :ensure t)
+
+    (use-package cider
+      :ensure t)
+
+    (setq cider-eldoc-display-for-symbol-at-point nil) ; disable cider showing eldoc during symbol at point
+
+    (setq lsp-clojure-custom-server-command '("/usr/bin/clojure-lsp"))
+
+(defun lsp-clojure-nrepl-connect ()
+  "Connect to the running nrepl debug server of clojure-lsp."
+  (interactive)
+  (let ((info (lsp-clojure-server-info-raw)))
+    (save-match-data
+      (when-let (port (and (string-match "\"port\":\\([0-9]+\\)" info)
+                           (match-string 1 info)))
+        (cider-connect-clj `(:host "localhost"
+                             :port ,port))))))
+
 
 #+end_src
 
