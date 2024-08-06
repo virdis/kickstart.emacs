@@ -207,6 +207,7 @@ To search and replace, use query-replace-regexp to replace one by one C-M-% (SPC
 
       (start/leader-keys
         "c" '(:ignore t :wk "Code/Lsp")
+        "c l" '(lsp-mode t :wk "Start Lsp")
         "c d" '(lsp-find-definition :wk "Lsp find definition")
         "c r" '(lsp-find-references :wk "Lsp find references")
         "c i" '(lsp-find-implementation :wk "Lsp find implementations")
@@ -215,6 +216,7 @@ To search and replace, use query-replace-regexp to replace one by one C-M-% (SPC
         "c K" '(lsp-ui-doc-show :wk "Show ui docs symbol")
         "c W" '(lsp-ui-doc-focus-frame :wk "Focus doc frame")
         "c H" '(lsp-treemacs-call-hierarchy :wk "Incoming call hierarchy")
+        "c s" '(yas-insert-snippet :wk "Insert snippet")
         "c u r" '(lsp-ui-peek-find-references :wk "Lsp find references"))
 
       (start/leader-keys
@@ -405,9 +407,9 @@ Project interaction library for Emacs.
       :custom
       (projectile-run-use-comint-mode t) ;; Interactive run dialog when running projects inside emacs (like giving input)
       (projectile-switch-project-action #'projectile-dired) ;; Open dired when switching to a project
-      (projectile-project-search-path '("~/projects/" "~/work/" "~/Source/golang/" ("~/github" . 1)))) ;; . 1 means only search the first subdirectory level for projects
+      (projectile-project-search-path '("~/Source/rust/" "~/Source/clojure/" "~/Source/sql/" "~/Source/golang/" ("~/github" . 1)))) ;; . 1 means only search the first subdirectory level for projects
     ;; Use Bookmarks for smaller, not standard project
- 
+ (setq projectile-completion-system 'ivy)
 #+end_src
 
 ** Eglot
@@ -497,9 +499,12 @@ Langauge server protoco Support for Emacs
 A template system for Emacs. And yasnippet-snippets is a snippet collection package.
 To use it write out the full keyword (or use autocompletion) and press Tab.
 #+begin_src emacs-lisp
+(use-package yasnippet
+  :config
+  (yas-global-mode))
 
-  (setq yas-reload-all 1)
-  (use-package yasnippet-snippets
+(use-package yasnippet-snippets
+  :after yasnippet
 	:hook (prog-mode . yas-minor-mode))
 #+end_src
 
@@ -508,6 +513,13 @@ It's not required for every language like C,C++,C#,Java,Javascript etc. to insta
 but for more specific languages it is necessary for syntax highlighting.
 If you want to use TreeSitter, check out this [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][website]] or try out [[https://github.com/renzmann/treesit-auto][Treesit-auto]].
 Currently it's tedious to use Treesitter, because emacs has not yet fully migrated to it.
+
+#+begin_src emacs-lisp
+(use-package treesit-auto
+  :config
+  (global-treesit-auto-mode))
+#+end_src
+
 *** Lua mode
 Example, how to setup a language mode (if you don't want it, feel free to delete it).
 Use SPC-tab to uncomment the lines.
@@ -563,6 +575,15 @@ Run Go tests and programs from emacs.
       :ensure t)
 
     (add-hook 'prog-mode-hook #'aggressive-indent-mode)
+#+end_src
+
+*** Yaml Mode
+
+#+begin_src emacs-lisp
+(use-package yaml-mode
+  
+:ensure t)
+
 #+end_src
 
 *** Org Mode
@@ -849,56 +870,56 @@ One alternative is ivy and counsel, check out the [[https://github.com/MiniApoll
 Provides search and navigation commands based on the Emacs completion function.
 Check out their [[https://github.com/minad/consult][git repository]] for more awesome functions.
 #+begin_src emacs-lisp
-(use-package consult
-  ;; Enable automatic preview at point in the *Completions* buffer. This is
-  ;; relevant when you use the default completion UI.
-  :hook (completion-list-mode . consult-preview-at-point-mode)
-  :init
-  ;; Optionally configure the register formatting. This improves the register
-  ;; preview for `consult-register', `consult-register-load',
-  ;; `consult-register-store' and the Emacs built-ins.
-  (setq register-preview-delay 0.5
-        register-preview-function #'consult-register-format)
+    ;; (use-package consult
+    ;;   ;; Enable automatic preview at point in the *Completions* buffer. This is
+    ;;   ;; relevant when you use the default completion UI.
+    ;;   :hook (completion-list-mode . consult-preview-at-point-mode)
+    ;;   :init
+    ;;   ;; Optionally configure the register formatting. This improves the register
+    ;;   ;; preview for `consult-register', `consult-register-load',
+    ;;   ;; `consult-register-store' and the Emacs built-ins.
+    ;;   (setq register-preview-delay 0.5
+    ;;         register-preview-function #'consult-register-format)
 
-  ;; Optionally tweak the register preview window.
-  ;; This adds thin lines, sorting and hides the mode line of the window.
-  (advice-add #'register-preview :override #'consult-register-window)
+    ;;   ;; Optionally tweak the register preview window.
+    ;;   ;; This adds thin lines, sorting and hides the mode line of the window.
+    ;;   (advice-add #'register-preview :override #'consult-register-window)
 
-  ;; Use Consult to select xref locations with preview
-  (setq xref-show-xrefs-function #'consult-xref
-        xref-show-definitions-function #'consult-xref)
-  :config
-  ;; Optionally configure preview. The default value
-  ;; is 'any, such that any key triggers the preview.
-   (setq consult-preview-key 'any)
-   (setq consult-preview-key "M-.")
-   (setq consult-preview-key '("S-<down>" "S-<up>"))
+    ;;   ;; Use Consult to select xref locations with preview
+    ;;   (setq xref-show-xrefs-function #'consult-xref
+    ;;         xref-show-definitions-function #'consult-xref)
+    ;;   :config
+    ;;   ;; Optionally configure preview. The default value
+    ;;   ;; is 'any, such that any key triggers the preview.
+    ;;    (setq consult-preview-key 'any)
+    ;;    (setq consult-preview-key "M-.")
+    ;;    (setq consult-preview-key '("S-<down>" "S-<up>"))
 
-  ;; For some commands and buffer sources it is useful to configure the
-  ;; :preview-key on a per-command basis using the `consult-customize' macro.
-  ;; (consult-customize
-  ;; consult-theme :preview-key '(:debounce 0.2 any)
-  ;; consult-ripgrep consult-git-grep consult-grep
-  ;; consult-bookmark consult-recent-file consult-xref
-  ;; consult--source-bookmark consult--source-file-register
-  ;; consult--source-recent-file consult--source-project-recent-file
-  ;; :preview-key "M-."
-  ;; :preview-key '(:debounce 0.4 any))
+    ;;   ;; For some commands and buffer sources it is useful to configure the
+    ;;   ;; :preview-key on a per-command basis using the `consult-customize' macro.
+    ;;   ;; (consult-customize
+    ;;   ;; consult-theme :preview-key '(:debounce 0.2 any)
+    ;;   ;; consult-ripgrep consult-git-grep consult-grep
+    ;;   ;; consult-bookmark consult-recent-file consult-xref
+    ;;   ;; consult--source-bookmark consult--source-file-register
+    ;;   ;; consult--source-recent-file consult--source-project-recent-file
+    ;;   ;; :preview-key "M-."
+    ;;   ;; :preview-key '(:debounce 0.4 any))
 
-  ;; By default `consult-project-function' uses `project-root' from project.el.
-  ;; Optionally configure a different project root function.
-   ;;;; 1. project.el (the default)
-   ;;(setq consult-project-function #'consult--default-project--function)
-   ;;;; 2. vc.el (vc-root-dir)
-   ;;(setq consult-project-function (lambda (_) (vc-root-dir)))
-   ;;;; 3. locate-dominating-file
-  ;; (setq consult-project-function (lambda (_) (locate-dominating-file "." ".git")))
-   ;;;; 4. projectile.el (projectile-project-root)
-  (autoload 'projectile-project-root "projectile")
-  (setq consult-project-function (lambda (_) (projectile-project-root)))
-   ;;;; 5. No project support
-  ;; (setq consult-project-function nil)
-  )
+    ;;   ;; By default `consult-project-function' uses `project-root' from project.el.
+    ;;   ;; Optionally configure a different project root function.
+    ;;    ;;;; 1. project.el (the default)
+    ;;    ;;(setq consult-project-function #'consult--default-project--function)
+    ;;    ;;;; 2. vc.el (vc-root-dir)
+    ;;    ;;(setq consult-project-function (lambda (_) (vc-root-dir)))
+    ;;    ;;;; 3. locate-dominating-file
+    ;;   ;; (setq consult-project-function (lambda (_) (locate-dominating-file "." ".git")))
+    ;;    ;;;; 4. projectile.el (projectile-project-root)
+    ;;   (autoload 'projectile-project-root "projectile")
+    ;;   (setq consult-project-function (lambda (_) (projectile-project-root)))
+    ;;    ;;;; 5. No project support
+    ;;   ;; (setq consult-project-function nil)
+    ;;   )
 #+end_src
 
 ** Diminish
