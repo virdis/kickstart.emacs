@@ -206,7 +206,7 @@ To search and replace, use query-replace-regexp to replace one by one C-M-% (SPC
         "m w" '(lsp-ui-doc-focus-frame :wk "Focus doc frame")
         "m h" '(lsp-treemacs-call-hierarchy :wk "Incoming call hierarchy")
         "m s" '(yas-insert-snippet :wk "Insert snippet")
-        "m u r" '(lsp-ui-peek-find-references :wk "Lsp find references"))
+        "m R" '(lsp-ui-peek-find-references :wk "Lsp find references"))
 
       (start/leader-keys
         "t" '(:ignore t :wk "Code test")
@@ -220,28 +220,27 @@ To search and replace, use query-replace-regexp to replace one by one C-M-% (SPC
         "d v" '(dired :wk "Open dired")
         "d j" '(dired-jump :wk "Dired jump to current"))
 
-      (start/leader-keys
-        "e" '(:ignore t :wk "Eglot Evaluate")
-        "e e" '(eglot-reconnect :wk "Eglot Reconnect")
-        "e f" '(eglot-format :wk "Eglot Format")
-        "e l" '(consult-flymake :wk "Consult Flymake")
-        "e b" '(eval-buffer :wk "Evaluate elisp in buffer")
-        "e r" '(eval-region :wk "Evaluate elisp in region"))
+      ;; (start/leader-keys
+      ;;   "e" '(:ignore t :wk "Eglot Evaluate")
+      ;;   "e e" '(eglot-reconnect :wk "Eglot Reconnect")
+      ;;   "e f" '(eglot-format :wk "Eglot Format")
+      ;;   "e l" '(consult-flymake :wk "Consult Flymake")
+      ;;   "e b" '(eval-buffer :wk "Evaluate elisp in buffer")
+      ;;   "e r" '(eval-region :wk "Evaluate elisp in region"))
 
-      (start/leader-keys
+       (start/leader-keys
         "g" '(:ignore t :wk "Git")
         "g g" '(magit-status :wk "Magit status"))
 
       (start/leader-keys
         "h" '(:ignore t :wk "Help") ;; To get more help use C-h commands (describe variable, function, etc.)
-        "h q" '(save-buffers-kill-emacs :wk "Quit Emacs and Daemon")
         "h r" '((lambda () (interactive)
                   (load-file "~/.config/emacs/init.el"))
                 :wk "Reload Emacs config"))
 
       (start/leader-keys
         "s" '(:ignore t :wk "Show")
-        "s v" '(vterm :wk "vterm"))
+        "s v" '(vterm :wk "vterm")))
 
       ;; (start/leader-keys
       ;;   "t" '(:ignore t :wk "Toggle")
@@ -338,13 +337,13 @@ With Emacs version 29, true transparency has been added.
 #+begin_src emacs-lisp
 (set-face-attribute 'default nil
                         :font "Iosevka Nerd Font" ;; Set your favorite type of font or download JetBrains Mono
-                        :height 160
+                        :height 185
                         :weight 'bold)
     ;; This sets the default font on all graphical frames created after restarting Emacs.
     ;; Does the same thing as 'set-face-attribute default' above, but emacsclient fonts
     ;; are not right unless I also add this method of setting the default font.
 
-  (add-to-list 'default-frame-alist '(font . "Iosevka Nerd Font 17")) ;; Set your favorite font
+;;  (add-to-list 'default-frame-alist '(font . "Iosevka NF SemiBold-18")) ;; Set your favorite font
     (setq-default line-spacing 0.12)
 #+end_src
 
