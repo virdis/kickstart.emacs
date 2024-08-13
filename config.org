@@ -54,7 +54,7 @@
     ;; It's a template for your own configuration.
 
     ;; It is *recommeded* to configure it from the *config.org* file.
-    ;; The goal is that you read every line, top-to-bottom, understand
+    ;; The goaal is that you read every line, top-to-bottom, understand
     ;; what your configuration is doing, and modify it to suit your needs.
 
     ;; You can delete this when you're done. It's your config now. :)
@@ -265,7 +265,7 @@ To search and replace, use query-replace-regexp to replace one by one C-M-% (SPC
       (global-auto-revert-mode t) ;; Automatically reload file and show changes if the file has changed
 
       ;;(dired-kill-when-opening-new-dired-buffer t) ;; Dired don't create new buffer
-      ;;(recentf-mode t) ;; Enable recent file mode
+      (recentf-mode t) ;; Enable recent file mode
 
       ;;(global-visual-line-mode t)           ;; Enable truncated lines
       ;;(display-line-numbers-type 'relative) ;; Relative line numbers
@@ -388,11 +388,11 @@ Project interaction library for Emacs.
 aggressive-indent-mode is a minor mode that keeps your code always indented. It reindents after every change, making it more reliable than electric-indent-mode.
 
 #+begin_src emacs-lisp
-        (use-package aggressive-indent
-          :ensure t)
+    (use-package aggressive-indent
+      :ensure t)
 
 
-        (global-aggressive-indent-mode 1)
+    (global-aggressive-indent-mode 1)
     (add-hook 'emacs-lisp-mode-hook #'aggressive-indent-mode)
     (add-hook 'css-mode-hook #'aggressive-indent-mode)
     (add-hook 'go-mode-hook #'aggressive-indent-mode)
@@ -472,6 +472,7 @@ Langauge server protocol Support for Emacs
     ;; optionally if you want to use debugger
     (use-package dap-mode)
     ;; (use-package dap-LANGUAGE) to load the dap adapter for your language
+ ;;   (use-package dap-go)
     (require 'dap-dlv-go)
 
     ;; optional if you want which-key integration
@@ -511,10 +512,10 @@ Use SPC-tab to uncomment the lines.
       (setq lsp-go-analyses '((shadow . t)
                               (staticcheck . t))))
 
-(defun lsp-go-install-save-hooks ()
-  (add-hook 'before-save-hook #'lsp-format-buffer t t)
-  (add-hook 'before-save-hook #'lsp-organize-imports t t))
-(add-hook 'go-mode-hook #'lsp-go-install-save-hooks)
+    (defun lsp-go-install-save-hooks ()
+      (add-hook 'before-save-hook #'lsp-format-buffer t t)
+      (add-hook 'before-save-hook #'lsp-organize-imports t t))
+    (add-hook 'go-mode-hook #'lsp-go-install-save-hooks)
 
 #+end_src
 

@@ -50,6 +50,13 @@
   (setq evil-collection-mode-list '(dired ibuffer magit corfu vertico consult))
   (evil-collection-init))
 
+(use-package key-chord
+  :ensure t)
+(key-chord-mode 1) 
+(key-chord-define evil-insert-state-map "aa" 'evil-normal-state)
+(setq key-chord-one-key-delay 0.2) 
+
+
 (use-package general
   :config
   (general-evil-setup)
@@ -132,7 +139,7 @@
   (global-auto-revert-mode t) ;; Automatically reload file and show changes if the file has changed
 
   ;;(dired-kill-when-opening-new-dired-buffer t) ;; Dired don't create new buffer
-  ;;(recentf-mode t) ;; Enable recent file mode
+  (recentf-mode t) ;; Enable recent file mode
 
   ;;(global-visual-line-mode t)           ;; Enable truncated lines
   ;;(display-line-numbers-type 'relative) ;; Relative line numbers
@@ -164,21 +171,38 @@
           nil nil t)
   )
 
-(use-package gruvbox-theme
-  :config
-  (load-theme 'gruvbox-dark-medium t)) ;; We need to add t to trust this package
 
-(add-to-list 'default-frame-alist '(alpha-background . 90)) ;; For all new frames henceforth
+(use-package all-the-icons
+  :if (display-graphic-p))
+
+(use-package doom-themes
+  :ensure t
+  :config
+  ;; Global settings (defaults)
+  (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+        doom-themes-enable-italic t) ; if nil, italics is universally disabled
+  (load-theme 'doom-solarized-light t)
+
+  ;; Enable flashing mode-line on errors
+  (doom-themes-visual-bell-config)
+  ;; Enable custom neotree theme (all-the-icons must be installed!)
+  (doom-themes-neotree-config)
+  ;; or for treemacs users
+  ;;(setq doom-themes-treemacs-theme "doom-solarized-light") ; use "doom-colors" for less minimal icon theme
+  ;;(doom-themes-treemacs-config)
+  ;; Corrects (and improves) org-mode's native fontification.
+  (doom-themes-org-config))
+
 
 (set-face-attribute 'default nil
-                    ;; :font "JetBrains Mono" ;; Set your favorite type of font or download JetBrains Mono
-                    :height 120
-                    :weight 'medium)
+                    :font "Iosevka Nerd Font" ;; Set your favorite type of font or download JetBrains Mono
+                    :height 185
+                    :weight 'semi-bold)
 ;; This sets the default font on all graphical frames created after restarting Emacs.
 ;; Does the same thing as 'set-face-attribute default' above, but emacsclient fonts
 ;; are not right unless I also add this method of setting the default font.
 
-;;(add-to-list 'default-frame-alist '(font . "JetBrains Mono")) ;; Set your favorite font
+;;  (add-to-list 'default-frame-alist '(font . "Iosevka NF SemiBold-18")) ;; Set your favorite font
 (setq-default line-spacing 0.12)
 
 (use-package emacs
@@ -202,7 +226,7 @@
   :custom
   (projectile-run-use-comint-mode t) ;; Interactive run dialog when running projects inside emacs (like giving input)
   (projectile-switch-project-action #'projectile-dired) ;; Open dired when switching to a project
-  (projectile-project-search-path '("~/projects/" "~/work/" ("~/github" . 1)))) ;; . 1 means only search the first subdirectory level for projects
+  (projectile-project-search-path '("~/Source/" ("~/github" . 1)))) ;; . 1 means only search the first subdirectory level for projects
 ;; Use Bookmarks for smaller, not standard projects
 
 ;;(use-package eglot
@@ -221,8 +245,89 @@
 ;;               `(lua-mode . ("PATH_TO_THE_LSP_FOLDER/bin/lua-language-server" "-lsp"))) ;; Adds our lua lsp server to eglot's server list
 ;;  )
 
+(use-package aggressive-indent
+  :ensure t)
+
+
+(global-aggressive-indent-mode 1)
+(add-hook 'emacs-lisp-mode-hook #'aggressive-indent-mode)
+(add-hook 'css-mode-hook #'aggressive-indent-mode)
+(add-hook 'go-mode-hook #'aggressive-indent-mode)
+
+
+(use-package lsp-mode
+  :init
+  ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
+  (setq lsp-keymap-prefix "C-c l")
+  :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
+         (go-mode . lsp-deferred)
+         (clojure-mode . lsp-deferred)
+         (clojurescript-mode . lsp-deferred)
+         (clojurec-mode . lsp-deferred)
+         ;; if you want which-key integration
+         (lsp-mode . lsp-enable-which-key-integration))
+  :commands lsp-deferred)
+
+;; optionally
+(use-package lsp-ui :commands lsp-ui-mode)
+
+(use-package company
+  :ensure t)
+
+(use-package flycheck
+  :ensure t
+  :defer t
+  :diminish 
+  :init (global-flycheck-mode))
+
+;; if you are helm user
+;;(use-package helm-lsp :commands helm-lsp-workspace-symbol)
+;; if you are ivy user
+(use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
+(use-package lsp-treemacs :commands lsp-treemacs-errors-list)
+
+;; optionally if you want to use debugger
+(use-package dap-mode)
+;; (use-package dap-LANGUAGE) to load the dap adapter for your language
+(require 'dap-dlv-go)
+
+;; optional if you want which-key integration
+(use-package which-key
+  :config
+  (which-key-mode))
+
+
+
 (use-package yasnippet-snippets
   :hook (prog-mode . yas-minor-mode))
+
+(use-package go-mode
+  :config
+  (setq lsp-go-analyses '((shadow . t)
+                          (staticcheck . t))))
+
+(defun lsp-go-install-save-hooks ()
+  (add-hook 'before-save-hook #'lsp-format-buffer t t)
+  (add-hook 'before-save-hook #'lsp-organize-imports t t))
+(add-hook 'go-mode-hook #'lsp-go-install-save-hooks)
+
+(use-package gotest
+  :ensure t)
+
+(use-package clojure-mode
+  :ensure t)
+
+(use-package cider
+  :ensure t)
+
+(setq cider-eldoc-display-for-symbol-at-point nil) ; disable cider showing eldoc during symbol at point
+
+(setq lsp-clojure-custom-server-command '("/usr/bin/clojure-lsp"))
+
+(use-package yaml-mode
+  :ensure t)
+
+
 
 (use-package org
   :ensure nil
@@ -429,3 +534,39 @@
 (setq gc-cons-threshold (* 2 1000 1000))
 ;; Increase the amount of data which Emacs reads from the process
 (setq read-process-output-max (* 1024 1024)) ;; 1mb
+
+(use-package vterm
+  :config
+  (setq shell-file-name "/bin/sh"
+		vterm-max-scrollback 5000))
+(use-package vterm-toggle
+  :after vterm
+  :config
+  ;; When running programs in Vterm and in 'normal' mode, make sure that ESC
+  ;; kills the program as it would in most standard terminal programs.
+  (evil-define-key 'normal vterm-mode-map (kbd "<escape>") 'vterm--self-insert)
+  (setq vterm-toggle-fullscreen-p nil)
+  (setq vterm-toggle-scope 'project)
+  (add-to-list 'display-buffer-alist
+               '((lambda (buffer-or-name _)
+                   (let ((buffer (get-buffer buffer-or-name)))
+                     (with-current-buffer buffer
+                       (or (equal major-mode 'vterm-mode)
+                           (string-prefix-p vterm-buffer-name (buffer-name buffer))))))
+                 (display-buffer-reuse-window display-buffer-at-bottom)
+                 ;;(display-buffer-reuse-window display-buffer-in-direction)
+                 ;;display-buffer-in-direction/direction/dedicated is added in emacs27
+                 ;;(direction . bottom)
+                 ;;(dedicated . t) ;dedicated is supported in emacs27
+                 (reusable-frames . visible)
+                 (window-height . 0.4))))
+
+
+(use-package nerd-icons
+  :if (display-graphic-p))
+
+(use-package nerd-icons-dired
+  :hook (dired-mode . (lambda () (nerd-icons-dired-mode t))))
+
+(use-package nerd-icons-ibuffer
+  :hook (ibuffer-mode . nerd-icons-ibuffer-mode))
