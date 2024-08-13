@@ -67,6 +67,7 @@
     :prefix "SPC"           ;; Set leader key
     :global-prefix "C-SPC") ;; Set global leader key
 
+
   (start/leader-keys
     "." '(find-file :wk "Find file")
     "TAB" '(comment-line :wk "Comment lines")
@@ -81,28 +82,48 @@
     "f l" '(consult-line :wk "Find line")
     "f i" '(consult-imenu :wk "Imenu buffer locations"))
 
+  ;; (start/leader-keys
+  ;;   "b" '(:ignore t :wk "Buffer Bookmarks")
+  ;;   "b b" '(consult-buffer :wk "Switch buffer")
+  ;;   "b k" '(kill-this-buffer :wk "Kill this buffer")
+  ;;   "b i" '(ibuffer :wk "Ibuffer")
+  ;;   "b n" '(next-buffer :wk "Next buffer")
+  ;;   "b p" '(previous-buffer :wk "Previous buffer")
+  ;;   "b r" '(revert-buffer :wk "Reload buffer")
+  ;;   "b j" '(consult-bookmark :wk "Bookmark jump"))
+
   (start/leader-keys
-    "b" '(:ignore t :wk "Buffer Bookmarks")
-    "b b" '(consult-buffer :wk "Switch buffer")
-    "b k" '(kill-this-buffer :wk "Kill this buffer")
-    "b i" '(ibuffer :wk "Ibuffer")
-    "b n" '(next-buffer :wk "Next buffer")
-    "b p" '(previous-buffer :wk "Previous buffer")
-    "b r" '(revert-buffer :wk "Reload buffer")
-    "b j" '(consult-bookmark :wk "Bookmark jump"))
+    "m" '(:ignore t :wk "Code/Lsp")
+    "m d" '(lsp-find-definition :wk "Lsp find definition")
+    "m r" '(lsp-find-references :wk "Lsp find references")
+    "m i" '(lsp-find-implementation :wk "Lsp find implementations")
+    "m e" '(lsp-treemacs-errors-list :wk "Show error list")
+    "m r" '(lsp-rename :wk "Rename symbol")
+    "m k" '(lsp-ui-doc-show :wk "Show ui docs symbol")
+    "m w" '(lsp-ui-doc-focus-frame :wk "Focus doc frame")
+    "m h" '(lsp-treemacs-call-hierarchy :wk "Incoming call hierarchy")
+    "m s" '(yas-insert-snippet :wk "Insert snippet")
+    "m R" '(lsp-ui-peek-find-references :wk "Lsp find references"))
+
+  (start/leader-keys
+    "t" '(:ignore t :wk "Code test")
+    "t f" '(go-test-current-file :wk "Go test current file")
+    "t c" '(go-test-current-test :wk "Go test current test")
+    "t p" '(go-test-current-project :wk "Go test current project"))
+
 
   (start/leader-keys
     "d" '(:ignore t :wk "Dired")
     "d v" '(dired :wk "Open dired")
     "d j" '(dired-jump :wk "Dired jump to current"))
 
-  (start/leader-keys
-    "e" '(:ignore t :wk "Eglot Evaluate")
-    "e e" '(eglot-reconnect :wk "Eglot Reconnect")
-    "e f" '(eglot-format :wk "Eglot Format")
-    "e l" '(consult-flymake :wk "Consult Flymake")
-    "e b" '(eval-buffer :wk "Evaluate elisp in buffer")
-    "e r" '(eval-region :wk "Evaluate elisp in region"))
+  ;; (start/leader-keys
+  ;;   "e" '(:ignore t :wk "Eglot Evaluate")
+  ;;   "e e" '(eglot-reconnect :wk "Eglot Reconnect")
+  ;;   "e f" '(eglot-format :wk "Eglot Format")
+  ;;   "e l" '(consult-flymake :wk "Consult Flymake")
+  ;;   "e b" '(eval-buffer :wk "Evaluate elisp in buffer")
+  ;;   "e r" '(eval-region :wk "Evaluate elisp in region"))
 
   (start/leader-keys
     "g" '(:ignore t :wk "Git")
@@ -110,19 +131,15 @@
 
   (start/leader-keys
     "h" '(:ignore t :wk "Help") ;; To get more help use C-h commands (describe variable, function, etc.)
-    "h q" '(save-buffers-kill-emacs :wk "Quit Emacs and Daemon")
     "h r" '((lambda () (interactive)
               (load-file "~/.config/emacs/init.el"))
             :wk "Reload Emacs config"))
 
   (start/leader-keys
     "s" '(:ignore t :wk "Show")
-    "s e" '(eat :wk "Eat terminal"))
+    "s v" '(vterm :wk "vterm")))
 
-  (start/leader-keys
-    "t" '(:ignore t :wk "Toggle")
-    "t t" '(visual-line-mode :wk "Toggle truncated lines (wrap)")
-    "t l" '(display-line-numbers-mode :wk "Toggle line numbers")))
+
 
 (use-package emacs
   :custom
@@ -226,7 +243,7 @@
   :custom
   (projectile-run-use-comint-mode t) ;; Interactive run dialog when running projects inside emacs (like giving input)
   (projectile-switch-project-action #'projectile-dired) ;; Open dired when switching to a project
-  (projectile-project-search-path '("~/Source/" ("~/github" . 1)))) ;; . 1 means only search the first subdirectory level for projects
+  (projectile-project-search-path '("~/Source/"))) ;; . 1 means only search the first subdirectory level for projects
 ;; Use Bookmarks for smaller, not standard projects
 
 ;;(use-package eglot

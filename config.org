@@ -375,7 +375,7 @@ Replace the default modeline with a prettier more useful.
 Project interaction library for Emacs.
 #+begin_src emacs-lisp
     (use-package projectile
-      :init
+     :init
       (projectile-mode)
       :custom
       (projectile-run-use-comint-mode t) ;; Interactive run dialog when running projects inside emacs (like giving input)
