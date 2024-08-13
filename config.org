@@ -338,7 +338,7 @@ With Emacs version 29, true transparency has been added.
 (set-face-attribute 'default nil
                         :font "Iosevka Nerd Font" ;; Set your favorite type of font or download JetBrains Mono
                         :height 185
-                        :weight 'bold)
+                        :weight 'semi-bold)
     ;; This sets the default font on all graphical frames created after restarting Emacs.
     ;; Does the same thing as 'set-face-attribute default' above, but emacsclient fonts
     ;; are not right unless I also add this method of setting the default font.
