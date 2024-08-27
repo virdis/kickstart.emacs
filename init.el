@@ -82,15 +82,15 @@
     "f l" '(consult-line :wk "Find line")
     "f i" '(consult-imenu :wk "Imenu buffer locations"))
 
-  ;; (start/leader-keys
-  ;;   "b" '(:ignore t :wk "Buffer Bookmarks")
-  ;;   "b b" '(consult-buffer :wk "Switch buffer")
-  ;;   "b k" '(kill-this-buffer :wk "Kill this buffer")
-  ;;   "b i" '(ibuffer :wk "Ibuffer")
-  ;;   "b n" '(next-buffer :wk "Next buffer")
-  ;;   "b p" '(previous-buffer :wk "Previous buffer")
-  ;;   "b r" '(revert-buffer :wk "Reload buffer")
-  ;;   "b j" '(consult-bookmark :wk "Bookmark jump"))
+  (start/leader-keys
+    "b" '(:ignore t :wk "Buffer Bookmarks")
+    "b b" '(consult-buffer :wk "Switch buffer")
+    "b k" '(kill-this-buffer :wk "Kill this buffer")
+    "b i" '(ibuffer :wk "Ibuffer")
+    "b n" '(next-buffer :wk "Next buffer")
+    "b p" '(previous-buffer :wk "Previous buffer")
+    "b r" '(revert-buffer :wk "Reload buffer")
+    "b j" '(consult-bookmark :wk "Bookmark jump"))
 
   (start/leader-keys
     "m" '(:ignore t :wk "Code/Lsp")
@@ -136,6 +136,16 @@
             :wk "Reload Emacs config"))
 
   (start/leader-keys
+    "w" '(:igonre t :wk "Windows/Words")
+    "w c" '(evil-window-delete :wk "Close window")
+    "w n" '(evil-window-new :wk "New window")
+    "w s" '(evil-window-split :wk "Horizontal split window")
+    "w v" '(evil-window-vsplit :wk "Vertical split window")
+    ;; Words 
+    "w d" '(downcase-word :wk "Downcase word")
+    "w u" '(upcase-word :wk "Upcase word"))
+
+  (start/leader-keys
     "s" '(:ignore t :wk "Show")
     "s v" '(vterm :wk "vterm")))
 
@@ -159,7 +169,7 @@
   (recentf-mode t) ;; Enable recent file mode
 
   ;;(global-visual-line-mode t)           ;; Enable truncated lines
-  ;;(display-line-numbers-type 'relative) ;; Relative line numbers
+  (display-line-numbers-type 'relative) ;; Relative line numbers
   (global-display-line-numbers-mode t)  ;; Display line numbers
 
   (mouse-wheel-progressive-speed nil) ;; Disable progressive speed when scrolling
@@ -212,7 +222,7 @@
 
 
 (set-face-attribute 'default nil
-                    :font "Iosevka Nerd Font" ;; Set your favorite type of font or download JetBrains Mono
+                    :font "IosevkaTermSlab Nerd Font" ;; Set your favorite type of font or download JetBrains Mono
                     :height 185
                     :weight 'semi-bold)
 ;; This sets the default font on all graphical frames created after restarting Emacs.
