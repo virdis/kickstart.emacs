@@ -201,12 +201,13 @@ To search and replace, use query-replace-regexp to replace one by one C-M-% (SPC
         "m r" '(lsp-find-references :wk "Lsp find references")
         "m i" '(lsp-find-implementation :wk "Lsp find implementations")
         "m e" '(lsp-treemacs-errors-list :wk "Show error list")
-        "m r" '(lsp-rename :wk "Rename symbol")
+        "m R" '(lsp-rename :wk "Rename symbol")
         "m k" '(lsp-ui-doc-show :wk "Show ui docs symbol")
         "m w" '(lsp-ui-doc-focus-frame :wk "Focus doc frame")
+        "m c" '(lsp-ui-doc-hide :wk "Hide doc frame")
         "m h" '(lsp-treemacs-call-hierarchy :wk "Incoming call hierarchy")
         "m s" '(yas-insert-snippet :wk "Insert snippet")
-        "m R" '(lsp-ui-peek-find-references :wk "Lsp find references"))
+        "m r" '(lsp-ui-peek-find-references :wk "Lsp find references"))
 
       (start/leader-keys
         "t" '(:ignore t :wk "Code test")
@@ -214,6 +215,11 @@ To search and replace, use query-replace-regexp to replace one by one C-M-% (SPC
         "t c" '(go-test-current-test :wk "Go test current test")
         "t p" '(go-test-current-project :wk "Go test current project"))
 
+      (start/leader-keys
+        :keymaps 'go-mode
+        "a" '(:ignore t :wk "Golang Tags")
+        "a t" '(go-tag-add t :wk "Add Tag")
+        "a T" '(go-tag-remove t :wk "Remove Tag"))
 
       (start/leader-keys
         "d" '(:ignore t :wk "Dired")
@@ -244,6 +250,10 @@ To search and replace, use query-replace-regexp to replace one by one C-M-% (SPC
         "w n" '(evil-window-new :wk "New window")
         "w s" '(evil-window-split :wk "Horizontal split window")
         "w v" '(evil-window-vsplit :wk "Vertical split window")
+        "w h" '(evil-window-decrease-width :wk "Decrease window size")
+        "w l" '(evil-window-increase-width :wk "Increase window size")
+        "w j" '(evil-window-increase-height :wk "Increase window height size")
+        "w k" '(evil-window-decrease-height :wk "Decrease window height size")
         ;; Words 
         "w d" '(downcase-word :wk "Downcase word")
         "w u" '(upcase-word :wk "Upcase word"))
@@ -450,47 +460,49 @@ Langauge server protocol Support for Emacs
 
 #+begin_src emacs-lisp
 
-    (use-package lsp-mode
-        :init
-        ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
-        (setq lsp-keymap-prefix "C-c l")
-        :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
-                (go-mode . lsp-deferred)
-                (clojure-mode . lsp-deferred)
-                (clojurescript-mode . lsp-deferred)
-                (clojurec-mode . lsp-deferred)
-                ;; if you want which-key integration
-                (lsp-mode . lsp-enable-which-key-integration))
-        :commands lsp-deferred)
+       (use-package lsp-mode
+           :init
+           ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
+           (setq lsp-keymap-prefix "C-c l")
+           :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
+                   (go-mode . lsp-deferred)
+                   (clojure-mode . lsp-deferred)
+                   (clojurescript-mode . lsp-deferred)
+                   (clojurec-mode . lsp-deferred)
+                   ;; if you want which-key integration
+                   (lsp-mode . lsp-enable-which-key-integration))
+           :commands lsp-deferred)
 
-    ;; optionally
-    (use-package lsp-ui :commands lsp-ui-mode)
+       ;; optionally
+       (use-package lsp-ui :commands lsp-ui-mode)
+       (setq lsp-ui-doc-enable t)
+       (setq lsp-ui-doc-position 'at-point)
 
-    (use-package company
-        :ensure t)
+       (use-package company
+           :ensure t)
 
-    (use-package flycheck
-        :ensure t
-        :defer t
-        :diminish 
-        :init (global-flycheck-mode))
+       (use-package flycheck
+           :ensure t
+           :defer t
+           :diminish 
+           :init (global-flycheck-mode))
 
-    ;; if you are helm user
-    ;;(use-package helm-lsp :commands helm-lsp-workspace-symbol)
-    ;; if you are ivy user
-    (use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
-    (use-package lsp-treemacs :commands lsp-treemacs-errors-list)
+       ;; if you are helm user
+       ;;(use-package helm-lsp :commands helm-lsp-workspace-symbol)
+       ;; if you are ivy user
+       (use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
+       (use-package lsp-treemacs :commands lsp-treemacs-errors-list)
 
-    ;; optionally if you want to use debugger
-    (use-package dap-mode)
-    ;; (use-package dap-LANGUAGE) to load the dap adapter for your language
- ;;   (use-package dap-go)
-    (require 'dap-dlv-go)
+       ;; optionally if you want to use debugger
+       (use-package dap-mode)
+       ;; (use-package dap-LANGUAGE) to load the dap adapter for your language
+    ;;   (use-package dap-go)
+       (require 'dap-dlv-go)
 
-    ;; optional if you want which-key integration
-    (use-package which-key
-        :config
-        (which-key-mode))
+       ;; optional if you want which-key integration
+       (use-package which-key
+           :config
+           (which-key-mode))
 
 #+end_src
 
@@ -539,6 +551,16 @@ Run Go tests and programs from emacs.
 
 #+end_src
 
+*** GoTags 
+Add remove tags
+#+begin_src emacs-lisp
+(use-package go-tag
+  :ensure t)
+(setq go-tag-args (list "-transform" "camelcase"))
+(with-eval-after-load 'go-mode
+  (define-key go-mode-map (kbd "C-c t") #'go-tag-add)
+  (define-key go-mode-map (kbd "C-c T") #'go-tag-remove))
+#+end_src
 *** Clojure Lsp Mode
 
 #+begin_src emacs-lisp

@@ -101,6 +101,7 @@
     "m r" '(lsp-rename :wk "Rename symbol")
     "m k" '(lsp-ui-doc-show :wk "Show ui docs symbol")
     "m w" '(lsp-ui-doc-focus-frame :wk "Focus doc frame")
+    "m c" '(lsp-ui-doc-hide :wk "Hide doc frame")
     "m h" '(lsp-treemacs-call-hierarchy :wk "Incoming call hierarchy")
     "m s" '(yas-insert-snippet :wk "Insert snippet")
     "m R" '(lsp-ui-peek-find-references :wk "Lsp find references"))
@@ -110,6 +111,13 @@
     "t f" '(go-test-current-file :wk "Go test current file")
     "t c" '(go-test-current-test :wk "Go test current test")
     "t p" '(go-test-current-project :wk "Go test current project"))
+
+  (start/leader-keys
+    :keymaps 'go-mode-map
+    "a" '(:ignore t :wk "Golang Tags")
+    "a t" '(go-tag-add t :wk "Add Tag")
+    "a T" '(go-tag-remove t :wk "Remove Tag"))
+
 
 
   (start/leader-keys
@@ -141,6 +149,11 @@
     "w n" '(evil-window-new :wk "New window")
     "w s" '(evil-window-split :wk "Horizontal split window")
     "w v" '(evil-window-vsplit :wk "Vertical split window")
+    "w h" '(evil-window-decrease-width :wk "Decrease window size")
+    "w l" '(evil-window-increase-width :wk "Increase window size")
+    "w j" '(evil-window-increase-height :wk "Increase window height size")
+    "w k" '(evil-window-decrease-height :wk "Decrease window height size")
+
     ;; Words 
     "w d" '(downcase-word :wk "Downcase word")
     "w u" '(upcase-word :wk "Upcase word"))
@@ -297,6 +310,9 @@
 
 ;; optionally
 (use-package lsp-ui :commands lsp-ui-mode)
+(setq lsp-ui-doc-enable t)
+(setq lsp-ui-doc-position 'at-point)
+
 
 (use-package company
   :ensure t)
@@ -340,6 +356,12 @@
 
 (use-package gotest
   :ensure t)
+(use-package go-tag
+  :ensure t)
+(setq go-tag-args (list "-transform" "camelcase"))
+(with-eval-after-load 'go-mode
+  (define-key go-mode-map (kbd "C-c t") #'go-tag-add)
+  (define-key go-mode-map (kbd "C-c T") #'go-tag-remove))
 
 (use-package clojure-mode
   :ensure t)
