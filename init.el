@@ -107,6 +107,7 @@
     "m R" '(lsp-ui-peek-find-references :wk "Lsp find references"))
 
   (start/leader-keys
+    :keymaps 'go-mode-map
     "t" '(:ignore t :wk "Code test")
     "t f" '(go-test-current-file :wk "Go test current file")
     "t c" '(go-test-current-test :wk "Go test current test")

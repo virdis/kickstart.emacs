@@ -210,6 +210,7 @@ To search and replace, use query-replace-regexp to replace one by one C-M-% (SPC
         "m r" '(lsp-ui-peek-find-references :wk "Lsp find references"))
 
       (start/leader-keys
+        :keymaps 'go-mode
         "t" '(:ignore t :wk "Code test")
         "t f" '(go-test-current-file :wk "Go test current file")
         "t c" '(go-test-current-test :wk "Go test current test")
@@ -554,12 +555,10 @@ Run Go tests and programs from emacs.
 *** GoTags 
 Add remove tags
 #+begin_src emacs-lisp
-(use-package go-tag
-  :ensure t)
-(setq go-tag-args (list "-transform" "camelcase"))
-(with-eval-after-load 'go-mode
-  (define-key go-mode-map (kbd "C-c t") #'go-tag-add)
-  (define-key go-mode-map (kbd "C-c T") #'go-tag-remove))
+    (use-package go-tag
+      :ensure t)
+    (setq go-tag-args (list "-transform" "camelcase"))
+
 #+end_src
 *** Clojure Lsp Mode
 
